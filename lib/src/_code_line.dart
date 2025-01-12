@@ -469,12 +469,36 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   @override
   void moveCursorToPageUp() {
-    // TODO
+    var delta = _render?.linesPerPage ?? 0;
+    var current = selection.start;
+    var newTop = current.index - delta;
+    if (newTop < 0) {
+      newTop = 0;
+    }
+    selection = CodeLineSelection.collapsed(
+        index: newTop,
+        offset: min(codeLines[newTop].length, current.offset)
+    );
+    makeCursorVisible();
   }
 
   @override
   void moveCursorToPageDown() {
-    // TODO
+    var len = codeLines.length;
+    if (len == 0) {
+      return;
+    }
+    var delta = (_render?.linesPerPage ?? 0);
+    var current = selection.start;
+    var newTop = current.index + delta;
+    if (newTop >= len) {
+      newTop = len - 1;
+    }
+    selection = CodeLineSelection.collapsed(
+        index: newTop,
+        offset: min(codeLines[newTop].length, current.offset)
+    );
+    makeCursorVisible();
   }
 
   @override

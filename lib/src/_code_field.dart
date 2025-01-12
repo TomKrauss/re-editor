@@ -331,6 +331,11 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
     markNeedsPaint();
   }
 
+  int get linesPerPage {
+    var pageSize = size.height;
+    return pageSize~/lineHeight;
+  }
+
   set highlighter(_CodeHighlighter value) {
     if (_highlighter == value) {
       return;
