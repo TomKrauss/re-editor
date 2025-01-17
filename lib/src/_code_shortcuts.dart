@@ -95,10 +95,11 @@ class _CodeShortcutActions extends StatelessWidget {
         continue;
       }
       if (intent is CodeShortcutEscIntent) {
-        // Do not enable ESC key when nothing the eidtor can do.
+        // Do not enable ESC key when nothing the editor can do.
         actions[intent.runtimeType] = _EscCallbackAction(
           controller: editingController,
           findController: findController,
+          autocompleteState: context.findAncestorStateOfType<_CodeAutocompleteState>(),
           onInvoke: (intent) {
             return _onAction(context, intent);
           },
@@ -139,7 +140,7 @@ class _CodeShortcutActions extends StatelessWidget {
     if (editingController.isComposing) {
       return null;
     }
-    bool keepAutoCompleateState = false;
+    bool keepAutoCompleteState = false;
     switch (intent.runtimeType) {
       case CodeShortcutSelectAllIntent: {
         editingController.selectAll();
@@ -287,7 +288,7 @@ class _CodeShortcutActions extends StatelessWidget {
           editingController.deleteBackward();
         }
         inputController.notifyListeners();
-        keepAutoCompleateState = true;
+        keepAutoCompleteState = true;
         break;
       }
       case CodeShortcutNewLineIntent: {
@@ -315,7 +316,10 @@ class _CodeShortcutActions extends StatelessWidget {
         break;
       }
       case CodeShortcutEscIntent: {
-        if (findController?.value != null) {
+        final _CodeAutocompleteState? autocompleteState = context.findAncestorStateOfType<_CodeAutocompleteState>();
+        if (autocompleteState != null) {
+          autocompleteState.dismiss();
+        } else if (findController?.value != null) {
           findController?.close();
         } else {
           editingController.cancelSelection();
@@ -323,7 +327,7 @@ class _CodeShortcutActions extends StatelessWidget {
         break;
       }
     }
-    if (!keepAutoCompleateState) {
+    if (!keepAutoCompleteState) {
       final _CodeAutocompleteState? autocompleteState = context.findAncestorStateOfType<_CodeAutocompleteState>();
       autocompleteState?.dismiss();
     }
@@ -352,16 +356,18 @@ class _EscCallbackAction<T extends Intent> extends CallbackAction<T> {
 
   final CodeLineEditingController controller;
   final CodeFindController? findController;
+  final _CodeAutocompleteState? autocompleteState;
 
   _EscCallbackAction({
     required this.controller,
     required this.findController,
+    required this.autocompleteState,
     required super.onInvoke,
   });
 
   @override
   bool isEnabled(T intent) {
-    return !controller.isComposing && (findController?.value != null || !controller.selection.isCollapsed);
+    return autocompleteState != null || !controller.isComposing && (findController?.value != null || !controller.selection.isCollapsed);
   }
 
 }

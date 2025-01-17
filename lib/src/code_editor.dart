@@ -495,7 +495,7 @@ class _CodeEditorState extends State<CodeEditor> {
       chunkIndicatorColor: widget.style?.chunkIndicatorColor,
       cursorWidth: widget.style?.cursorWidth ?? _kDefaultCaretWidth,
       showCursorWhenReadOnly: widget.showCursorWhenReadOnly ?? true,
-      sperator: widget.sperator,
+      seperator: widget.sperator,
       border: widget.border,
       borderRadius: widget.borderRadius,
       clipBehavior: widget.clipBehavior,

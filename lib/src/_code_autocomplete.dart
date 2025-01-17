@@ -185,7 +185,7 @@ class _CodeAutocompleteState extends State<_CodeAutocomplete> {
     return Actions(
       actions: {
         CodeShortcutCursorMoveIntent: _navigateAction,
-        CodeShortcutNewLineIntent: _selectAction,
+        CodeShortcutNewLineIntent: _selectAction
       },
       child: widget.child
     );

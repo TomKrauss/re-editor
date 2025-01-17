@@ -26,7 +26,7 @@ class _CodeEditable extends StatefulWidget {
   final bool showCursorWhenReadOnly;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
-  final Widget? sperator;
+  final Widget? seperator;
   final Border? border;
   final BorderRadius? borderRadius;
   final Clip clipBehavior;
@@ -67,7 +67,7 @@ class _CodeEditable extends StatefulWidget {
     required this.showCursorWhenReadOnly,
     required this.padding,
     required this.margin,
-    required this.sperator,
+    required this.seperator,
     this.border,
     this.borderRadius,
     this.clipBehavior = Clip.none,
@@ -247,8 +247,8 @@ class _CodeEditableState extends State<_CodeEditable> with AutomaticKeepAliveCli
             children: [
               if (indicator != null)
                 indicator,
-              if (widget.sperator != null)
-                widget.sperator!,
+              if (widget.seperator != null)
+                widget.seperator!,
               Expanded(
                 child: RepaintBoundary(
                   child: CompositedTransformTarget(
@@ -352,7 +352,7 @@ class _CodeEditableState extends State<_CodeEditable> with AutomaticKeepAliveCli
     if (!mounted) {
       return;
     }
-    // Delay 50ms to update the auto-complate prompt words.
+    // Delay 50ms to update the auto-complete prompt words.
     Future.delayed(const Duration(milliseconds: 50), () {
       _updateAutoCompleteState(true);
     });
