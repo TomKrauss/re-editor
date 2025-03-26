@@ -331,11 +331,6 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
     markNeedsPaint();
   }
 
-  int get linesPerPage {
-    var pageSize = size.height;
-    return pageSize~/lineHeight;
-  }
-
   set highlighter(_CodeHighlighter value) {
     if (_highlighter == value) {
       return;
@@ -629,7 +624,7 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
         }
         final CodeLineRenderParagraph last = _displayParagraphs.last;
         if (position.index > last.index) {
-          _verticalViewport.jumpTo(max(0, last.bottom - size.height + _preferredLineHeight * (position.index - last.index)));
+          _verticalViewport.jumpTo(max(0, last.bottom - size.height + _preferredLineHeight * (position.index - first.index)));
         }
       }
       if (tryCount < 10) {
@@ -848,10 +843,6 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
       result.add(BoxHitTestEntry(this, position));
       final CodeLineRenderParagraph? paragraph = _findDisplayRenderParagraph(position + paintOffset);
       final InlineSpan? span = paragraph?.getSpanForPosition(position - paragraph.offset + paintOffset);
-      MouseCursor? spanCursor;
-      if (span is TextSpan && span.mouseCursor != MouseCursor.defer) {
-        spanCursor = span.mouseCursor;
-      }
       if (span is MouseTrackerAnnotationTextSpan) {
         result.add(HitTestEntry(_MouseTrackerAnnotationTextSpan(
           id: paragraph!.index,
@@ -865,8 +856,10 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
       }
       if (_chunkIndicators.where((chunk) => chunk.canExpand && chunk.region.contains(position)).isNotEmpty) {
         _cursor = SystemMouseCursors.click;
+      } else if (span is TextSpan && span.mouseCursor != MouseCursor.defer) {
+        _cursor = span.mouseCursor;
       } else {
-        _cursor = spanCursor ?? SystemMouseCursors.text;
+        _cursor = SystemMouseCursors.text;
       }
       hitTarget = true;
     }
@@ -1421,7 +1414,7 @@ class _CodeCursorLinePainter extends _CodeFieldExtraPainter {
 
   @override
   void paint(Canvas canvas, Size size, _CodeFieldRender render) {
-    if (_color == null || _color == Colors.transparent || _color?.a == 0) {
+    if (_color == null || _color == Colors.transparent || _color!.alpha == 0) {
       return;
     }
     if (!_selection.isCollapsed) {
@@ -1475,7 +1468,7 @@ abstract class _CodeFieldSelectionsPainter extends _CodeFieldExtraPainter {
 
   @override
   void paint(Canvas canvas, Size size, _CodeFieldRender render) {
-    if (_color == Colors.transparent || _color.a == 0) {
+    if (_color == Colors.transparent || _color.alpha == 0) {
       return;
     }
     final List<CodeLineRenderParagraph> paragraphs = render.displayParagraphs;
@@ -1635,7 +1628,7 @@ class _CodeFieldCursorPainter extends _CodeFieldExtraPainter {
 
   @override
   void paint(Canvas canvas, Size size, _CodeFieldRender render) {
-    if (!_visible || !_willDraw || _color == Colors.transparent || _color.a == 0) {
+    if (!_visible || !_willDraw || _color == Colors.transparent || _color.alpha == 0) {
       return;
     }
     final CodeLineRenderParagraph? paragraph = render.findDisplayParagraphByLineIndex(_position.index);
@@ -1717,7 +1710,7 @@ class _CodeFieldFloatingCursorPainter extends _CodeFieldExtraPainter {
 
   @override
   void paint(Canvas canvas, Size size, _CodeFieldRender render) {
-    if (!_position.isActive() || _color == Colors.transparent || _color.a == 0) {
+    if (!_position.isActive() || _color == Colors.transparent || _color.alpha == 0) {
       return;
     }
     _drawFloatingCaret(canvas, _position.floatingCursorOffset!, size);
