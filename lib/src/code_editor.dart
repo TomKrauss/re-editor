@@ -488,8 +488,8 @@ class _CodeEditorState extends State<CodeEditor> {
       ),
       hintTextColor: widget.style?.hintTextColor,
       backgroundColor: widget.style?.backgroundColor,
-      selectionColor: widget.style?.selectionColor ?? selectionTheme.selectionColor ?? theme.colorScheme.primary.withOpacity(0.4),
-      highlightColor: widget.style?.highlightColor ?? selectionTheme.selectionColor ?? theme.colorScheme.primary.withOpacity(0.4),
+      selectionColor: widget.style?.selectionColor ?? selectionTheme.selectionColor ?? theme.colorScheme.primary.withValues(alpha: 0.4 * 255),
+      highlightColor: widget.style?.highlightColor ?? selectionTheme.selectionColor ?? theme.colorScheme.primary.withValues(alpha: 0.4 * 255),
       cursorColor:  widget.style?.cursorColor ?? selectionTheme.cursorColor ?? theme.colorScheme.primary,
       cursorLineColor: widget.style?.cursorLineColor,
       chunkIndicatorColor: widget.style?.chunkIndicatorColor,
@@ -535,11 +535,11 @@ class _CodeEditorState extends State<CodeEditor> {
       child = Focus(
         autofocus: autofocus,
         focusNode: _focusNode,
-        onKey: (node, event) {
-          if (event.isKeyPressed(LogicalKeyboardKey.backspace)) {
+        onKeyEvent: (node, event) {
+          if (event.logicalKey == LogicalKeyboardKey.backspace) {
             _editingController.deleteBackward();
             return KeyEventResult.handled;
-          } else if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+          } else if (event.logicalKey == LogicalKeyboardKey.enter) {
             _editingController.applyNewLine();
             return KeyEventResult.handled;
           }
